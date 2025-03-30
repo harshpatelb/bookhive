@@ -3,79 +3,100 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export function ETLProcess() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
-        <div className="bg-blue-900 text-white p-4 rounded-md text-center w-full md:w-64">
-          <h3 className="font-bold mb-2">Extract</h3>
-          <p className="text-xs text-blue-200">
+        <div className="bg-gradient-to-br from-amber-900 to-black p-5 rounded-md text-center w-full md:w-64 border border-amber-500/30">
+          <h3 className="font-bold mb-2 text-amber-400">Extract</h3>
+          <p className="text-sm text-zinc-300">
             Data is extracted from MySQL source databases containing library transaction records
           </p>
         </div>
         
-        <div className="hidden md:block text-2xl">→</div>
-        <div className="block md:hidden text-2xl">↓</div>
+        <div className="hidden md:block text-2xl text-amber-500">→</div>
+        <div className="block md:hidden text-2xl text-amber-500">↓</div>
         
-        <div className="bg-purple-900 text-white p-4 rounded-md text-center w-full md:w-64">
-          <h3 className="font-bold mb-2">Transform</h3>
-          <p className="text-xs text-purple-200">
+        <div className="bg-gradient-to-br from-amber-900 to-black p-5 rounded-md text-center w-full md:w-64 border border-amber-500/30">
+          <h3 className="font-bold mb-2 text-amber-400">Transform</h3>
+          <p className="text-sm text-zinc-300">
             Data is cleaned, standardized, and restructured to fit the data warehouse schema
           </p>
         </div>
         
-        <div className="hidden md:block text-2xl">→</div>
-        <div className="block md:hidden text-2xl">↓</div>
+        <div className="hidden md:block text-2xl text-amber-500">→</div>
+        <div className="block md:hidden text-2xl text-amber-500">↓</div>
         
-        <div className="bg-green-900 text-white p-4 rounded-md text-center w-full md:w-64">
-          <h3 className="font-bold mb-2">Load</h3>
-          <p className="text-xs text-green-200">
-            Transformed data is loaded into MSSQL data warehouse using Star and Snowflake schemas
+        <div className="bg-gradient-to-br from-amber-900 to-black p-5 rounded-md text-center w-full md:w-64 border border-amber-500/30">
+          <h3 className="font-bold mb-2 text-amber-400">Load</h3>
+          <p className="text-sm text-zinc-300">
+            Transformed data is loaded into MySQL data warehouse using Star and Snowflake schemas
           </p>
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-slate-800 border-slate-700">
-          <CardContent className="p-4">
-            <h4 className="font-semibold text-sm mb-2">Extract Process</h4>
-            <ul className="list-disc pl-5 space-y-1 text-xs text-slate-300">
-              <li>Connect to MySQL databases from multiple library branches</li>
-              <li>Query tables for books, members, and transactions</li>
-              <li>Schedule regular extraction jobs (daily/weekly)</li>
-              <li>Track changes using timestamps for incremental loads</li>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="bg-zinc-900 border-amber-500/20">
+          <CardContent className="p-5">
+            <h4 className="font-semibold text-amber-400 mb-3">Extract Process</h4>
+            <ul className="space-y-2 text-zinc-300">
+              {[
+                "Connect to MySQL databases from UWindsor and Windsor Public Library",
+                "Query tables for books, members, and transactions",
+                "Schedule regular extraction jobs (daily/weekly)",
+                "Track changes using timestamps for incremental loads"
+              ].map((item, index) => (
+                <li key={index} className="flex items-start">
+                  <span className="text-amber-500 mr-2">•</span>
+                  <span>{item}</span>
+                </li>
+              ))}
             </ul>
           </CardContent>
         </Card>
         
-        <Card className="bg-slate-800 border-slate-700">
-          <CardContent className="p-4">
-            <h4 className="font-semibold text-sm mb-2">Transform Process</h4>
-            <ul className="list-disc pl-5 space-y-1 text-xs text-slate-300">
-              <li>Clean data (remove duplicates, fix formatting)</li>
-              <li>Standardize values (uppercase titles, format dates)</li>
-              <li>Split complex fields into separate dimensions</li>
-              <li>Create surrogate keys for dimension tables</li>
-              <li>Apply business rules and calculations</li>
+        <Card className="bg-zinc-900 border-amber-500/20">
+          <CardContent className="p-5">
+            <h4 className="font-semibold text-amber-400 mb-3">Transform Process</h4>
+            <ul className="space-y-2 text-zinc-300">
+              {[
+                "Clean data (remove duplicates, fix formatting)",
+                "Standardize values (uppercase titles, format dates)",
+                "Split complex fields into separate dimensions",
+                "Create surrogate keys for dimension tables",
+                "Apply business rules and calculations"
+              ].map((item, index) => (
+                <li key={index} className="flex items-start">
+                  <span className="text-amber-500 mr-2">•</span>
+                  <span>{item}</span>
+                </li>
+              ))}
             </ul>
           </CardContent>
         </Card>
         
-        <Card className="bg-slate-800 border-slate-700">
-          <CardContent className="p-4">
-            <h4 className="font-semibold text-sm mb-2">Load Process</h4>
-            <ul className="list-disc pl-5 space-y-1 text-xs text-slate-300">
-              <li>Load dimension tables first (Books, Members, Dates)</li>
-              <li>Load fact tables with foreign keys to dimensions</li>
-              <li>Validate data integrity with constraints</li>
-              <li>Create indexes for query optimization</li>
-              <li>Archive processed data for auditing</li>
+        <Card className="bg-zinc-900 border-amber-500/20">
+          <CardContent className="p-5">
+            <h4 className="font-semibold text-amber-400 mb-3">Load Process</h4>
+            <ul className="space-y-2 text-zinc-300">
+              {[
+                "Load dimension tables first (Books, Members, Dates)",
+                "Load fact tables with foreign keys to dimensions",
+                "Validate data integrity with constraints",
+                "Create indexes for query optimization",
+                "Archive processed data for auditing"
+              ].map((item, index) => (
+                <li key={index} className="flex items-start">
+                  <span className="text-amber-500 mr-2">•</span>
+                  <span>{item}</span>
+                </li>
+              ))}
             </ul>
           </CardContent>
         </Card>
       </div>
       
-      <div className="bg-slate-800 p-4 rounded-md">
-        <h4 className="font-semibold text-sm mb-2">Sample ETL SQL Code</h4>
-        <pre className="text-xs text-slate-300 overflow-x-auto">
+      <div className="bg-zinc-900 p-5 rounded-md border border-amber-500/20">
+        <h4 className="font-semibold text-amber-400 mb-3">Sample ETL SQL Code</h4>
+        <pre className="bg-zinc-800 p-4 rounded-md overflow-x-auto text-sm text-zinc-300">
 {`-- Create a staging table for extracted data
 CREATE TABLE staging_books (
   id INT,
@@ -83,16 +104,34 @@ CREATE TABLE staging_books (
   isbn VARCHAR(20),
   author VARCHAR(100),
   publisher VARCHAR(100),
-  genre VARCHAR(50)
+  genre VARCHAR(50),
+  source VARCHAR(50)
 );
 
--- Extract data from MySQL source
+-- Extract data from UWindsor Library
 INSERT INTO staging_books
-SELECT b.id, b.title, b.isbn, a.name, p.name, g.name
-FROM mysql_source.books b
-JOIN mysql_source.authors a ON b.author_id = a.id
-JOIN mysql_source.publishers p ON b.publisher_id = p.id
-JOIN mysql_source.genres g ON b.genre_id = g.id;
+SELECT 
+  book_id, 
+  title, 
+  isbn, 
+  author, 
+  NULL as publisher, 
+  NULL as genre,
+  'UWindsor_Library' as source
+FROM UWindsor_Library.books;
+
+-- Extract data from Windsor Public Library
+INSERT INTO staging_books
+SELECT 
+  item_id, 
+  title, 
+  NULL as isbn, 
+  creator as author, 
+  NULL as publisher, 
+  type as genre,
+  'Windsor_PLibrary' as source
+FROM Windsor_PLibrary.inventory
+WHERE type = 'Book';
 
 -- Transform data
 UPDATE staging_books
@@ -104,22 +143,16 @@ SET
   END;
 
 -- Load data into dimension tables
-INSERT INTO Dim_Authors (author_name)
-SELECT DISTINCT author FROM staging_books
-WHERE author NOT IN (SELECT author_name FROM Dim_Authors);
-
--- Load data into fact tables
-INSERT INTO Fact_Transactions (book_key, member_key, date_key, status_key)
+INSERT INTO dim_books (book_key, source_id, title, author, isbn, source_system)
 SELECT 
-  b.book_key, 
-  m.member_key, 
-  d.date_key,
-  s.status_key
-FROM staging_transactions t
-JOIN Dim_Books b ON t.book_id = b.source_book_id
-JOIN Dim_Members m ON t.member_id = m.source_member_id
-JOIN Dim_Dates d ON t.transaction_date = d.date
-JOIN Dim_Status s ON t.status = s.status_name;`}
+  UUID() as book_key,
+  CONCAT(source, '-', id) as source_id,
+  title,
+  author,
+  COALESCE(isbn, 'N/A') as isbn,
+  source
+FROM staging_books
+WHERE CONCAT(source, '-', id) NOT IN (SELECT source_id FROM dim_books);`}
         </pre>
       </div>
     </div>

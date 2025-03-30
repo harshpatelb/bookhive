@@ -55,6 +55,36 @@ const predefinedQueries = [
     query: 'SELECT source_system, COUNT(*) as record_count\nFROM fact_loans\nGROUP BY source_system;',
     description: 'Compares the number of records from each source system'
   },
+  { 
+    id: 'overdue_books', 
+    name: 'Overdue Books', 
+    query: 'SELECT b.title, b.author, m.first_name, m.last_name, \nDATEDIFF(CURRENT_DATE, fl.loan_date) as days_overdue\nFROM fact_loans fl\nJOIN dim_books b ON fl.book_key = b.book_key\nJOIN dim_members m ON fl.member_key = m.member_key\nWHERE fl.return_date IS NULL\nAND DATEDIFF(CURRENT_DATE, fl.loan_date) > 14\nORDER BY days_overdue DESC;',
+    description: 'Lists all books that are overdue (more than 14 days since checkout)'
+  },
+  { 
+    id: 'genre_popularity', 
+    name: 'Genre Popularity', 
+    query: 'SELECT b.genre, COUNT(*) as loan_count\nFROM fact_loans fl\nJOIN dim_books b ON fl.book_key = b.book_key\nGROUP BY b.genre\nORDER BY loan_count DESC;',
+    description: 'Shows which book genres are most popular based on checkout frequency'
+  },
+  { 
+    id: 'seasonal_trends', 
+    name: 'Seasonal Borrowing Trends', 
+    query: 'SELECT \n  CASE \n    WHEN d.month IN (12, 1, 2) THEN \'Winter\'\n    WHEN d.month IN (3, 4, 5) THEN \'Spring\'\n    WHEN d.month IN (6, 7, 8) THEN \'Summer\'\n    ELSE \'Fall\'\n  END as season,\n  COUNT(*) as loan_count\nFROM fact_loans fl\nJOIN dim_date d ON fl.loan_date = d.date_key\nGROUP BY season\nORDER BY loan_count DESC;',
+    description: 'Analyzes borrowing patterns across different seasons'
+  },
+  { 
+    id: 'library_comparison', 
+    name: 'Library System Comparison', 
+    query: 'SELECT \n  source_system,\n  COUNT(DISTINCT book_key) as unique_books,\n  COUNT(DISTINCT member_key) as unique_members,\n  COUNT(*) as total_transactions\nFROM fact_loans\nGROUP BY source_system;',
+    description: 'Compares the two library systems by books, members, and transaction volume'
+  },
+  { 
+    id: 'loan_duration', 
+    name: 'Average Loan Duration', 
+    query: 'SELECT \n  source_system,\n  AVG(loan_duration_days) as avg_days_borrowed\nFROM fact_loans\nWHERE return_date IS NOT NULL\nGROUP BY source_system;',
+    description: 'Calculates the average number of days books are kept before being returned'
+  },
 ];
 
 // Mock query results
@@ -83,6 +113,35 @@ const mockResults = {
   source_comparison: [
     { source_system: 'UWindsor_Library', record_count: 2345 },
     { source_system: 'Windsor_PLibrary', record_count: 3127 },
+  ],
+  overdue_books: [
+    { title: 'The Hobbit', author: 'J.R.R. Tolkien', first_name: 'Robert', last_name: 'Johnson', days_overdue: 45 },
+    { title: 'Harry Potter and the Sorcerer\'s Stone', author: 'J.K. Rowling', first_name: 'Sarah', last_name: 'Williams', days_overdue: 32 },
+    { title: 'The Da Vinci Code', author: 'Dan Brown', first_name: 'Thomas', last_name: 'Anderson', days_overdue: 28 },
+    { title: 'The Alchemist', author: 'Paulo Coelho', first_name: 'Jennifer', last_name: 'Smith', days_overdue: 21 },
+    { title: 'The Hunger Games', author: 'Suzanne Collins', first_name: 'David', last_name: 'Brown', days_overdue: 18 },
+  ],
+  genre_popularity: [
+    { genre: 'Fiction', loan_count: 1245 },
+    { genre: 'Mystery', loan_count: 876 },
+    { genre: 'Science Fiction', loan_count: 743 },
+    { genre: 'Romance', loan_count: 652 },
+    { genre: 'Biography', loan_count: 521 },
+    { genre: 'History', loan_count: 498 },
+  ],
+  seasonal_trends: [
+    { season: 'Summer', loan_count: 1876 },
+    { season: 'Winter', loan_count: 1654 },
+    { season: 'Fall', loan_count: 1432 },
+    { season: 'Spring', loan_count: 1298 },
+  ],
+  library_comparison: [
+    { source_system: 'UWindsor_Library', unique_books: 12500, unique_members: 3200, total_transactions: 28450 },
+    { source_system: 'Windsor_PLibrary', unique_books: 18700, unique_members: 5400, total_transactions: 42680 },
+  ],
+  loan_duration: [
+    { source_system: 'UWindsor_Library', avg_days_borrowed: 12.7 },
+    { source_system: 'Windsor_PLibrary', avg_days_borrowed: 14.3 },
   ],
   custom: [
     { book_key: 1001, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', source_system: 'UWindsor_Library' },

@@ -33,28 +33,12 @@ const Header = () => {
               Data Warehouse
             </a>
             <a 
-              href="#" 
-              className="text-sm font-medium text-zinc-400 hover:text-amber-400 transition-colors"
+              href="/etl-process" 
+              className={`text-sm font-medium ${router.pathname === '/etl-process' ? 'text-amber-400' : 'text-zinc-400 hover:text-amber-400'} transition-colors`}
             >
-              Documentation
-            </a>
-            <a 
-              href="#" 
-              className="text-sm font-medium text-zinc-400 hover:text-amber-400 transition-colors"
-            >
-              Support
+              ETL Process
             </a>
           </nav>
-          
-          <Button 
-            size="sm" 
-            variant="outline" 
-            className="hidden sm:flex border-amber-500/50 text-amber-400 hover:bg-amber-500/10"
-            onClick={() => alert('Login functionality would be implemented here')}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
-            Login
-          </Button>
         </div>
       </div>
     </div>

@@ -33,20 +33,20 @@ export default function Architecture() {
                       MySQL (Source Databases)
                     </h3>
                     <p className="text-zinc-400 mb-4">
-                      Stores transactional data from individual libraries including books, members, and transactions.
+                      Two separate source databases storing transactional data from individual libraries.
                     </p>
                     <ul className="space-y-2 text-zinc-300">
                       <li className="flex items-start">
                         <span className="text-amber-500 mr-2">•</span>
-                        <span>Books table (title, author, genre, ISBN, publisher)</span>
+                        <span><strong className="text-amber-400">UWindsor_Library:</strong> University library system with books, members, and loans tables</span>
                       </li>
                       <li className="flex items-start">
                         <span className="text-amber-500 mr-2">•</span>
-                        <span>Members table (name, email, join date, status)</span>
+                        <span><strong className="text-amber-400">Windsor_PLibrary:</strong> Public library system with inventory, patrons, and checkouts tables</span>
                       </li>
                       <li className="flex items-start">
                         <span className="text-amber-500 mr-2">•</span>
-                        <span>Transactions table (borrow/return records)</span>
+                        <span>Different schema structures requiring transformation for integration</span>
                       </li>
                     </ul>
                   </div>

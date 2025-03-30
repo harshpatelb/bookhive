@@ -50,6 +50,13 @@ export default function Home() {
                   >
                     View Architecture
                   </Button>
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-to-r from-amber-700 to-orange-700 hover:from-amber-800 hover:to-orange-800 text-white font-semibold"
+                    onClick={() => window.location.href = '/data-warehouse'}
+                  >
+                    Query Data Warehouse
+                  </Button>
                 </div>
               </div>
               
