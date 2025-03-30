@@ -27,6 +27,12 @@ const Header = () => {
               Architecture
             </a>
             <a 
+              href="/data-warehouse" 
+              className={`text-sm font-medium ${router.pathname === '/data-warehouse' ? 'text-amber-400' : 'text-zinc-400 hover:text-amber-400'} transition-colors`}
+            >
+              Data Warehouse
+            </a>
+            <a 
               href="#" 
               className="text-sm font-medium text-zinc-400 hover:text-amber-400 transition-colors"
             >
