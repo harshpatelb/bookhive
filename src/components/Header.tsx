@@ -38,6 +38,12 @@ const Header = () => {
             >
               ETL Process
             </a>
+            <a 
+              href="/data-entry" 
+              className={`text-sm font-medium ${router.pathname === '/data-entry' ? 'text-amber-400' : 'text-zinc-400 hover:text-amber-400'} transition-colors`}
+            >
+              Data Entry
+            </a>
           </nav>
         </div>
       </div>

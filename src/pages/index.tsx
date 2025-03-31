@@ -44,14 +44,6 @@ export default function Home() {
                   </Button>
                   <Button 
                     size="lg" 
-                    variant="outline" 
-                    className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10"
-                    onClick={() => window.location.href = '/architecture'}
-                  >
-                    View Architecture
-                  </Button>
-                  <Button 
-                    size="lg" 
                     className="bg-gradient-to-r from-amber-700 to-orange-700 hover:from-amber-800 hover:to-orange-800 text-white font-semibold"
                     onClick={() => window.location.href = '/data-warehouse'}
                   >
