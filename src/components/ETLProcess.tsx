@@ -39,9 +39,10 @@ export function ETLProcess() {
             <h4 className="font-semibold text-amber-400 mb-3">Extract Process</h4>
             <ul className="space-y-2 text-zinc-300">
               {[
-                "Connect to MySQL databases from UWindsor and Windsor Public Library",
-                "Query tables for books, members, and transactions",
-                "Schedule regular extraction jobs (daily/weekly)",
+                "Connect to MySQL databases using MySQL Workbench",
+                "Execute SELECT queries on UWindsor and Windsor Public Library tables",
+                "Store extracted data in temporary tables for transformation",
+                "Use MySQL Workbench's data export functionality for large datasets",
                 "Track changes using timestamps for incremental loads"
               ].map((item, index) => (
                 <li key={index} className="flex items-start">
@@ -58,11 +59,12 @@ export function ETLProcess() {
             <h4 className="font-semibold text-amber-400 mb-3">Transform Process</h4>
             <ul className="space-y-2 text-zinc-300">
               {[
-                "Clean data (remove duplicates, fix formatting)",
-                "Standardize values (uppercase titles, format dates)",
-                "Split complex fields into separate dimensions",
-                "Create surrogate keys for dimension tables",
-                "Apply business rules and calculations"
+                "Create staging tables in MySQL for transformation",
+                "Use MySQL string functions to standardize text data",
+                "Apply CASE statements for conditional transformations",
+                "Generate surrogate keys for dimension tables",
+                "Perform data type conversions and validation",
+                "Handle NULL values with COALESCE and IFNULL functions"
               ].map((item, index) => (
                 <li key={index} className="flex items-start">
                   <span className="text-amber-500 mr-2">•</span>
@@ -78,11 +80,12 @@ export function ETLProcess() {
             <h4 className="font-semibold text-amber-400 mb-3">Load Process</h4>
             <ul className="space-y-2 text-zinc-300">
               {[
-                "Load dimension tables first (Books, Members, Dates)",
-                "Load fact tables with foreign keys to dimensions",
-                "Validate data integrity with constraints",
-                "Create indexes for query optimization",
-                "Archive processed data for auditing"
+                "Use INSERT IGNORE for dimension tables to avoid duplicates",
+                "Implement INSERT...ON DUPLICATE KEY UPDATE for updates",
+                "Create foreign key relationships between tables",
+                "Build indexes for optimized query performance",
+                "Use MySQL transactions for data integrity",
+                "Schedule regular loads with MySQL Event Scheduler"
               ].map((item, index) => (
                 <li key={index} className="flex items-start">
                   <span className="text-amber-500 mr-2">•</span>
@@ -95,64 +98,163 @@ export function ETLProcess() {
       </div>
       
       <div className="bg-zinc-900 p-5 rounded-md border border-amber-500/20">
-        <h4 className="font-semibold text-amber-400 mb-3">Sample ETL SQL Code</h4>
+        <h4 className="font-semibold text-amber-400 mb-3">MySQL Workbench ETL Implementation</h4>
         <pre className="bg-zinc-800 p-4 rounded-md overflow-x-auto text-sm text-zinc-300">
-{`-- Create a staging table for extracted data
-CREATE TABLE staging_books (
-  id INT,
-  title VARCHAR(255),
-  isbn VARCHAR(20),
-  author VARCHAR(100),
-  publisher VARCHAR(100),
-  genre VARCHAR(50),
-  source VARCHAR(50)
+{`-- MySQL Workbench ETL Implementation
+
+-- 1. Extract: Create temporary tables to hold extracted data
+CREATE TEMPORARY TABLE temp_uwindsor_books AS
+SELECT 
+  b.id, 
+  b.title, 
+  b.isbn, 
+  b.author, 
+  b.publisher, 
+  b.genre,
+  b.publication_year,
+  'UWindsor_Library' as source
+FROM UWindsor_Library.books b;
+
+CREATE TEMPORARY TABLE temp_windsor_plibrary_books AS
+SELECT 
+  i.item_id, 
+  i.title, 
+  i.isbn, 
+  i.creator as author, 
+  i.publisher, 
+  i.category as genre,
+  i.year_published,
+  'Windsor_PLibrary' as source
+FROM Windsor_PLibrary.inventory i
+WHERE i.category IN ('Book', 'Textbook', 'Reference');
+
+-- 2. Transform: Create and populate staging table with transformed data
+CREATE TABLE BookHIVE_DW.staging_books (
+  source_id VARCHAR(50) NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  isbn VARCHAR(13),
+  author VARCHAR(255) NOT NULL,
+  publisher VARCHAR(255),
+  genre VARCHAR(100),
+  publication_year INT,
+  source_system VARCHAR(50) NOT NULL,
+  PRIMARY KEY (source_id)
 );
 
--- Extract data from UWindsor Library
-INSERT INTO staging_books
+-- Transform UWindsor data and insert into staging
+INSERT INTO BookHIVE_DW.staging_books
 SELECT 
-  book_id, 
-  title, 
-  isbn, 
-  author, 
-  NULL as publisher, 
-  NULL as genre,
-  'UWindsor_Library' as source
-FROM UWindsor_Library.books;
-
--- Extract data from Windsor Public Library
-INSERT INTO staging_books
-SELECT 
-  item_id, 
-  title, 
-  NULL as isbn, 
-  creator as author, 
-  NULL as publisher, 
-  type as genre,
-  'Windsor_PLibrary' as source
-FROM Windsor_PLibrary.inventory
-WHERE type = 'Book';
-
--- Transform data
-UPDATE staging_books
-SET 
-  title = UPPER(title),
-  author = CASE 
-    WHEN author LIKE '%,%' THEN SUBSTRING_INDEX(author, ',', 1)
-    ELSE author
-  END;
-
--- Load data into dimension tables
-INSERT INTO dim_books (book_key, source_id, title, author, isbn, source_system)
-SELECT 
-  UUID() as book_key,
-  CONCAT(source, '-', id) as source_id,
-  title,
-  author,
-  COALESCE(isbn, 'N/A') as isbn,
+  CONCAT('UW-', id) as source_id,
+  UPPER(TRIM(title)) as title,
+  CASE 
+    WHEN isbn IS NULL OR isbn = '' THEN NULL
+    WHEN LENGTH(isbn) < 10 THEN NULL
+    ELSE isbn
+  END as isbn,
+  TRIM(author) as author,
+  NULLIF(TRIM(publisher), '') as publisher,
+  NULLIF(TRIM(genre), '') as genre,
+  CASE
+    WHEN publication_year < 1800 OR publication_year > YEAR(CURRENT_DATE) THEN NULL
+    ELSE publication_year
+  END as publication_year,
   source
-FROM staging_books
-WHERE CONCAT(source, '-', id) NOT IN (SELECT source_id FROM dim_books);`}
+FROM temp_uwindsor_books;
+
+-- Transform Windsor Public Library data and insert into staging
+INSERT INTO BookHIVE_DW.staging_books
+SELECT 
+  CONCAT('PL-', item_id) as source_id,
+  UPPER(TRIM(title)) as title,
+  CASE 
+    WHEN isbn IS NULL OR isbn = '' THEN NULL
+    WHEN LENGTH(isbn) < 10 THEN NULL
+    ELSE isbn
+  END as isbn,
+  TRIM(author) as author,
+  NULLIF(TRIM(publisher), '') as publisher,
+  NULLIF(TRIM(genre), '') as genre,
+  CASE
+    WHEN year_published < 1800 OR year_published > YEAR(CURRENT_DATE) THEN NULL
+    ELSE year_published
+  END as publication_year,
+  source
+FROM temp_windsor_plibrary_books;
+
+-- 3. Load: Populate dimension and fact tables
+-- First ensure dimension tables exist
+INSERT IGNORE INTO BookHIVE_DW.Dim_Authors (author_name)
+SELECT DISTINCT author FROM BookHIVE_DW.staging_books;
+
+INSERT IGNORE INTO BookHIVE_DW.Dim_Publishers (publisher_name)
+SELECT DISTINCT publisher FROM BookHIVE_DW.staging_books 
+WHERE publisher IS NOT NULL;
+
+INSERT IGNORE INTO BookHIVE_DW.Dim_Genres (genre_name)
+SELECT DISTINCT genre FROM BookHIVE_DW.staging_books 
+WHERE genre IS NOT NULL;
+
+-- Load book dimension with foreign keys
+INSERT INTO BookHIVE_DW.Dim_Books (source_id, title, isbn, author_key, publisher_key, genre_key, publication_year, source_system)
+SELECT 
+  s.source_id,
+  s.title,
+  s.isbn,
+  a.author_key,
+  p.publisher_key,
+  g.genre_key,
+  s.publication_year,
+  s.source_system
+FROM BookHIVE_DW.staging_books s
+LEFT JOIN BookHIVE_DW.Dim_Authors a ON s.author = a.author_name
+LEFT JOIN BookHIVE_DW.Dim_Publishers p ON s.publisher = p.publisher_name
+LEFT JOIN BookHIVE_DW.Dim_Genres g ON s.genre = g.genre_name
+ON DUPLICATE KEY UPDATE
+  title = s.title,
+  isbn = s.isbn,
+  author_key = a.author_key,
+  publisher_key = p.publisher_key,
+  genre_key = g.genre_key,
+  publication_year = s.publication_year;
+
+-- Clean up staging table for next ETL run
+TRUNCATE TABLE BookHIVE_DW.staging_books;`}
+        </pre>
+      </div>
+      
+      <div className="bg-zinc-900 p-5 rounded-md border border-amber-500/20">
+        <h4 className="font-semibold text-amber-400 mb-3">MySQL Event Scheduler for Automated ETL</h4>
+        <pre className="bg-zinc-800 p-4 rounded-md overflow-x-auto text-sm text-zinc-300">
+{`-- Enable MySQL Event Scheduler
+SET GLOBAL event_scheduler = ON;
+
+-- Create an event for daily ETL process
+CREATE EVENT IF NOT EXISTS daily_etl_process
+ON SCHEDULE EVERY 1 DAY
+STARTS CURRENT_TIMESTAMP + INTERVAL 1 DAY
+DO
+BEGIN
+  -- Call stored procedures for ETL process
+  CALL BookHIVE_DW.extract_source_data();
+  CALL BookHIVE_DW.transform_staging_data();
+  CALL BookHIVE_DW.load_warehouse_data();
+  
+  -- Log ETL completion
+  INSERT INTO BookHIVE_DW.etl_log (process_name, start_time, end_time, status)
+  VALUES ('Daily ETL', NOW() - INTERVAL 1 HOUR, NOW(), 'Completed');
+END;
+
+-- Create stored procedure for extraction
+DELIMITER //
+CREATE PROCEDURE BookHIVE_DW.extract_source_data()
+BEGIN
+  -- Extraction logic here
+  -- Similar to the extraction code shown above
+END //
+DELIMITER ;
+
+-- Create stored procedures for transformation and loading
+-- Similar structure to the above procedure`}
         </pre>
       </div>
     </div>

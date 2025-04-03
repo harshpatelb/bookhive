@@ -85,6 +85,48 @@ const predefinedQueries = [
     query: 'SELECT \n  source_system,\n  AVG(loan_duration_days) as avg_days_borrowed\nFROM fact_loans\nWHERE return_date IS NOT NULL\nGROUP BY source_system;',
     description: 'Calculates the average number of days books are kept before being returned'
   },
+  { 
+    id: 'author_popularity', 
+    name: 'Most Popular Authors', 
+    query: 'SELECT a.author_name, COUNT(*) as loan_count\nFROM fact_loans fl\nJOIN dim_books b ON fl.book_key = b.book_key\nJOIN dim_authors a ON b.author_key = a.author_key\nGROUP BY a.author_name\nORDER BY loan_count DESC\nLIMIT 10;',
+    description: 'Shows the top 10 most popular authors based on book checkouts'
+  },
+  { 
+    id: 'publisher_analysis', 
+    name: 'Publisher Analysis', 
+    query: 'SELECT p.publisher_name, COUNT(DISTINCT b.book_key) as book_count, COUNT(*) as loan_count\nFROM fact_loans fl\nJOIN dim_books b ON fl.book_key = b.book_key\nJOIN dim_publishers p ON b.publisher_key = p.publisher_key\nGROUP BY p.publisher_name\nORDER BY loan_count DESC\nLIMIT 10;',
+    description: 'Analyzes which publishers have the most books and loans'
+  },
+  { 
+    id: 'member_demographics', 
+    name: 'Member Demographics', 
+    query: 'SELECT \n  YEAR(CURRENT_DATE) - YEAR(join_date) as membership_years,\n  COUNT(*) as member_count,\n  source_system\nFROM dim_members\nGROUP BY membership_years, source_system\nORDER BY membership_years;',
+    description: 'Shows member distribution by years of membership and source system'
+  },
+  { 
+    id: 'weekend_vs_weekday', 
+    name: 'Weekend vs Weekday Loans', 
+    query: 'SELECT \n  CASE WHEN d.is_weekend = 1 THEN \'Weekend\' ELSE \'Weekday\' END as day_type,\n  COUNT(*) as loan_count,\n  source_system\nFROM fact_loans fl\nJOIN dim_date d ON fl.loan_date = d.date_key\nGROUP BY day_type, source_system;',
+    description: 'Compares loan patterns between weekends and weekdays'
+  },
+  { 
+    id: 'book_age_analysis', 
+    name: 'Book Age Analysis', 
+    query: 'SELECT \n  FLOOR((YEAR(CURRENT_DATE) - publication_year) / 10) * 10 as decade_age,\n  COUNT(*) as book_count,\n  AVG(loan_duration_days) as avg_loan_duration\nFROM fact_loans fl\nJOIN dim_books b ON fl.book_key = b.book_key\nWHERE publication_year IS NOT NULL\nGROUP BY decade_age\nORDER BY decade_age;',
+    description: 'Analyzes book popularity by age in decades'
+  },
+  { 
+    id: 'quarterly_trends', 
+    name: 'Quarterly Loan Trends', 
+    query: 'SELECT \n  d.year,\n  d.quarter,\n  COUNT(*) as loan_count,\n  COUNT(DISTINCT fl.member_key) as unique_members\nFROM fact_loans fl\nJOIN dim_date d ON fl.loan_date = d.date_key\nGROUP BY d.year, d.quarter\nORDER BY d.year, d.quarter;',
+    description: 'Shows loan trends by quarter with unique member counts'
+  },
+  { 
+    id: 'genre_by_library', 
+    name: 'Genre Popularity by Library', 
+    query: 'SELECT \n  g.genre_name,\n  fl.source_system,\n  COUNT(*) as loan_count\nFROM fact_loans fl\nJOIN dim_books b ON fl.book_key = b.book_key\nJOIN dim_genres g ON b.genre_key = g.genre_key\nGROUP BY g.genre_name, fl.source_system\nORDER BY g.genre_name, loan_count DESC;',
+    description: 'Compares genre popularity between the two library systems'
+  },
 ];
 
 // Mock query results

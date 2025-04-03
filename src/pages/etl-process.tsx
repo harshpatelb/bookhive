@@ -23,9 +23,48 @@ export default function ETLProcessPage() {
                 ETL Process
               </h1>
               <p className="text-zinc-400 mt-2">
-                How data flows from source systems to the data warehouse
+                How data flows from source systems to the data warehouse using MySQL Workbench
               </p>
             </div>
+            
+            <Card className="shadow-lg border-none bg-gradient-to-br from-zinc-900 to-black mb-8">
+              <CardHeader className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-t-lg border-b border-amber-500/20">
+                <CardTitle className="text-amber-400">MySQL Workbench Implementation</CardTitle>
+                <CardDescription className="text-zinc-400">
+                  How to run the ETL process in MySQL Workbench
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="bg-gradient-to-br from-zinc-900 to-black p-6 rounded-xl border border-amber-500/20">
+                  <ol className="list-decimal pl-5 space-y-4 text-zinc-300">
+                    <li>
+                      <strong className="text-amber-400">Open MySQL Workbench:</strong>
+                      <p className="mt-1 text-zinc-400">Launch MySQL Workbench and connect to your MySQL server instance.</p>
+                    </li>
+                    <li>
+                      <strong className="text-amber-400">Create Source Databases:</strong>
+                      <p className="mt-1 text-zinc-400">Execute the UWindsor_Library and Windsor_PLibrary schema creation scripts.</p>
+                    </li>
+                    <li>
+                      <strong className="text-amber-400">Create Data Warehouse Database:</strong>
+                      <p className="mt-1 text-zinc-400">Run the BookHIVE_DW schema creation script to set up the data warehouse structure.</p>
+                    </li>
+                    <li>
+                      <strong className="text-amber-400">Create ETL Stored Procedures:</strong>
+                      <p className="mt-1 text-zinc-400">Set up stored procedures for extraction, transformation, and loading processes.</p>
+                    </li>
+                    <li>
+                      <strong className="text-amber-400">Run ETL Process:</strong>
+                      <p className="mt-1 text-zinc-400">Execute the ETL stored procedures to populate the data warehouse.</p>
+                    </li>
+                    <li>
+                      <strong className="text-amber-400">Schedule Automated ETL:</strong>
+                      <p className="mt-1 text-zinc-400">Configure MySQL Event Scheduler to run the ETL process automatically at scheduled intervals.</p>
+                    </li>
+                  </ol>
+                </div>
+              </CardContent>
+            </Card>
 
             <Card className="shadow-lg border-none bg-gradient-to-br from-zinc-900 to-black mb-8">
               <CardHeader className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-t-lg border-b border-amber-500/20">
