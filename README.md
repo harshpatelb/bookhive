@@ -539,6 +539,322 @@ JOIN dim_date d ON fl.loan_date = d.date_key
 GROUP BY day_type, source_system;
 ```
 
+## Working with Data in MySQL Workbench
+
+This section provides detailed instructions on how to work with data in MySQL Workbench for the BookHIVE system.
+
+### Importing Sample Data
+
+To populate your databases with sample data:
+
+1. **Create CSV Files for Import**:
+   
+   Create CSV files with the following structure for each table:
+
+   **UWindsor_Library.books.csv**:
+   ```
+   id,title,author,isbn,publisher,genre,publication_year
+   1,"Introduction to Database Systems","C.J. Date","9780321197849","Pearson","Computer Science",2003
+   2,"The Art of Computer Programming","Donald Knuth","9780201896831","Addison-Wesley","Computer Science",1997
+   ```
+
+   **Windsor_PLibrary.inventory.csv**:
+   ```
+   item_id,title,creator,isbn,publisher,category,year_published,acquisition_date
+   1,"To Kill a Mockingbird","Harper Lee","9780061120084","HarperCollins","Fiction",1960,"2020-01-15"
+   2,"1984","George Orwell","9780451524935","Signet Classics","Fiction",1949,"2020-02-20"
+   ```
+
+2. **Import Data Using MySQL Workbench**:
+
+   a. Open MySQL Workbench and connect to your server
+   
+   b. Right-click on the target table in the Navigator panel and select "Table Data Import Wizard"
+   
+   c. Browse to select your CSV file
+   
+   d. Follow the wizard steps:
+      - Select "Use existing table" option
+      - Map CSV columns to table columns
+      - Review the data and click "Next"
+      - Click "Finish" to import the data
+
+   e. Verify the import with a SELECT query:
+   ```sql
+   SELECT * FROM UWindsor_Library.books;
+   ```
+
+3. **Bulk Import Using SQL**:
+
+   Alternatively, you can use LOAD DATA INFILE:
+   ```sql
+   LOAD DATA INFILE 'C:/path/to/UWindsor_Library.books.csv' 
+   INTO TABLE UWindsor_Library.books 
+   FIELDS TERMINATED BY ',' 
+   ENCLOSED BY '"' 
+   LINES TERMINATED BY '\n'
+   IGNORE 1 ROWS;
+   ```
+
+### Exporting Data from MySQL Workbench
+
+To export data from your databases:
+
+1. **Export Using MySQL Workbench UI**:
+
+   a. Right-click on the database or table you want to export in the Navigator panel
+   
+   b. Select "Table Data Export Wizard"
+   
+   c. Choose the tables to export
+   
+   d. Select the export format (CSV, JSON, Excel, etc.)
+   
+   e. Specify the destination file
+   
+   f. Click "Next" and then "Finish"
+
+2. **Export Using SQL Commands**:
+
+   ```sql
+   SELECT * 
+   FROM UWindsor_Library.books
+   INTO OUTFILE 'C:/path/to/export/books_export.csv'
+   FIELDS TERMINATED BY ',' 
+   ENCLOSED BY '"'
+   LINES TERMINATED BY '\n';
+   ```
+
+3. **Export Data Warehouse Results**:
+
+   a. Run your query in MySQL Workbench
+   
+   b. In the Results Grid, click the "Export" button
+   
+   c. Choose your preferred format (CSV, JSON, HTML, etc.)
+   
+   d. Specify the destination file
+   
+   e. Click "Save"
+
+### Visualizing Data in MySQL Workbench
+
+MySQL Workbench provides several ways to visualize your data:
+
+1. **Using the Results Grid**:
+
+   a. Run a query in MySQL Workbench
+   
+   b. View the results in the Results Grid
+   
+   c. Sort columns by clicking on column headers
+   
+   d. Filter results using the filter row at the top of the grid
+
+2. **Creating Visual Explain Plans**:
+
+   a. Write your query in the query editor
+   
+   b. Click on the "Explain" button in the toolbar
+   
+   c. View the visual execution plan to understand query performance
+
+3. **Database Diagrams**:
+
+   a. Select "Model" > "Create EER Model From Database" from the menu
+   
+   b. Follow the wizard to select your database
+   
+   c. View the generated Entity-Relationship diagram
+   
+   d. Customize the diagram by dragging tables and adjusting relationships
+
+### Running Advanced Queries
+
+To run advanced queries against the data warehouse:
+
+1. **Open a New Query Tab**:
+   
+   a. Click on the "SQL Editor" tab
+   
+   b. Select "New Query Tab" or press Ctrl+T
+
+2. **Write and Execute Complex Queries**:
+
+   ```sql
+   -- Example: Cross-library analysis
+   SELECT 
+     CASE 
+       WHEN source_system = 'UWindsor_Library' THEN 'Academic'
+       WHEN source_system = 'Windsor_PLibrary' THEN 'Public'
+     END as library_type,
+     g.genre_name,
+     COUNT(*) as loan_count,
+     AVG(fl.loan_duration_days) as avg_loan_duration
+   FROM BookHIVE_DW.Fact_Transactions fl
+   JOIN BookHIVE_DW.Dim_Books b ON fl.book_key = b.book_key
+   JOIN BookHIVE_DW.Dim_Genres g ON b.genre_key = g.genre_key
+   GROUP BY library_type, g.genre_name
+   ORDER BY library_type, loan_count DESC;
+   ```
+
+3. **Save Queries for Future Use**:
+
+   a. Click "File" > "Save Script As..."
+   
+   b. Choose a location and filename
+   
+   c. Add descriptive comments to document the query purpose
+
+4. **Create Stored Procedures for Complex Analysis**:
+
+   ```sql
+   DELIMITER //
+   CREATE PROCEDURE BookHIVE_DW.analyze_genre_trends_by_quarter()
+   BEGIN
+     SELECT 
+       d.year,
+       d.quarter,
+       g.genre_name,
+       COUNT(*) as loan_count,
+       RANK() OVER (PARTITION BY d.year, d.quarter ORDER BY COUNT(*) DESC) as popularity_rank
+     FROM BookHIVE_DW.Fact_Transactions fl
+     JOIN BookHIVE_DW.Dim_Books b ON fl.book_key = b.book_key
+     JOIN BookHIVE_DW.Dim_Genres g ON b.genre_key = g.genre_key
+     JOIN BookHIVE_DW.Dim_Dates d ON fl.date_key = d.date_key
+     GROUP BY d.year, d.quarter, g.genre_name
+     ORDER BY d.year, d.quarter, popularity_rank;
+   END //
+   DELIMITER ;
+   
+   -- Execute the stored procedure
+   CALL BookHIVE_DW.analyze_genre_trends_by_quarter();
+   ```
+
+### Creating Custom Reports
+
+To create custom reports from your data warehouse:
+
+1. **Design Report Queries**:
+
+   ```sql
+   -- Monthly circulation report
+   SELECT 
+     d.year,
+     d.month,
+     COUNT(*) as total_loans,
+     COUNT(DISTINCT b.book_key) as unique_books,
+     COUNT(DISTINCT m.member_key) as unique_members,
+     SUM(CASE WHEN fl.is_overdue = 1 THEN 1 ELSE 0 END) as overdue_count,
+     SUM(fl.fine_amount) as total_fines
+   FROM BookHIVE_DW.Fact_Transactions fl
+   JOIN BookHIVE_DW.Dim_Books b ON fl.book_key = b.book_key
+   JOIN BookHIVE_DW.Dim_Members m ON fl.member_key = m.member_key
+   JOIN BookHIVE_DW.Dim_Dates d ON fl.date_key = d.date_key
+   GROUP BY d.year, d.month
+   ORDER BY d.year, d.month;
+   ```
+
+2. **Export Reports to Various Formats**:
+
+   a. Run your report query
+   
+   b. Click the "Export" button in the Results Grid
+   
+   c. Choose format (CSV, HTML, JSON, etc.)
+   
+   d. Save to your desired location
+
+3. **Schedule Automated Reports**:
+
+   a. Create a stored procedure for your report:
+   
+   ```sql
+   DELIMITER //
+   CREATE PROCEDURE BookHIVE_DW.generate_monthly_report()
+   BEGIN
+     -- Report query here
+     
+     -- Export results to a table
+     CREATE TABLE IF NOT EXISTS BookHIVE_DW.monthly_reports (
+       report_id INT PRIMARY KEY AUTO_INCREMENT,
+       report_date DATETIME,
+       year INT,
+       month INT,
+       total_loans INT,
+       unique_books INT,
+       unique_members INT,
+       overdue_count INT,
+       total_fines DECIMAL(10,2)
+     );
+     
+     INSERT INTO BookHIVE_DW.monthly_reports 
+       (report_date, year, month, total_loans, unique_books, unique_members, overdue_count, total_fines)
+     SELECT 
+       NOW(),
+       d.year,
+       d.month,
+       COUNT(*) as total_loans,
+       COUNT(DISTINCT b.book_key) as unique_books,
+       COUNT(DISTINCT m.member_key) as unique_members,
+       SUM(CASE WHEN fl.is_overdue = 1 THEN 1 ELSE 0 END) as overdue_count,
+       SUM(fl.fine_amount) as total_fines
+     FROM BookHIVE_DW.Fact_Transactions fl
+     JOIN BookHIVE_DW.Dim_Books b ON fl.book_key = b.book_key
+     JOIN BookHIVE_DW.Dim_Members m ON fl.member_key = m.member_key
+     JOIN BookHIVE_DW.Dim_Dates d ON fl.date_key = d.date_key
+     GROUP BY d.year, d.month
+     ORDER BY d.year, d.month;
+   END //
+   DELIMITER ;
+   ```
+   
+   b. Create an event to run the report monthly:
+   
+   ```sql
+   CREATE EVENT monthly_report_generation
+   ON SCHEDULE EVERY 1 MONTH
+   STARTS CURRENT_TIMESTAMP + INTERVAL 1 DAY
+   DO
+   BEGIN
+     CALL BookHIVE_DW.generate_monthly_report();
+   END;
+   ```
+
+### Monitoring Database Performance
+
+To monitor and optimize your database performance:
+
+1. **View Table Statistics**:
+
+   ```sql
+   SHOW TABLE STATUS FROM BookHIVE_DW;
+   ```
+
+2. **Check Query Performance**:
+
+   ```sql
+   EXPLAIN ANALYZE
+   SELECT b.title, COUNT(*) as loan_count
+   FROM BookHIVE_DW.Fact_Transactions fl
+   JOIN BookHIVE_DW.Dim_Books b ON fl.book_key = b.book_key
+   GROUP BY b.title
+   ORDER BY loan_count DESC
+   LIMIT 10;
+   ```
+
+3. **Monitor Server Status**:
+
+   In MySQL Workbench:
+   
+   a. Navigate to "Server Status" in the Navigator panel
+   
+   b. View current connections, memory usage, and other metrics
+   
+   c. Use the "Client Connections" tab to see active connections
+   
+   d. Check "InnoDB Status" for storage engine details
+
 ## Troubleshooting
 
 ### Common Issues
@@ -547,16 +863,30 @@ GROUP BY day_type, source_system;
    - Ensure MySQL Server is running
    - Verify connection credentials
    - Check firewall settings
+   - Confirm the server hostname and port are correct
 
 2. **ETL Process Failures**
    - Check the etl_log table for error details
    - Verify source database connectivity
    - Ensure sufficient permissions for the MySQL user
+   - Look for data type mismatches or constraint violations
 
 3. **Query Performance Issues**
    - Verify indexes are properly created
    - Check for missing foreign key relationships
    - Consider optimizing complex queries
+   - Use EXPLAIN to analyze query execution plans
+
+4. **Import/Export Issues**
+   - Check file permissions
+   - Verify CSV format matches expected structure
+   - Ensure secure_file_priv setting allows access to your file location
+   - For large files, consider increasing max_allowed_packet setting
+
+5. **Data Visualization Problems**
+   - Update MySQL Workbench to the latest version
+   - Check if your query returns too many rows (limit results)
+   - Verify you have sufficient memory for large result sets
 
 ## Support
 

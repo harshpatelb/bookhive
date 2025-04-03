@@ -121,11 +121,135 @@ If you encounter any issues not covered in this guide, please refer to:
 2. The Next.js [documentation](https://nextjs.org/docs) for web application issues
 3. The MySQL [documentation](https://dev.mysql.com/doc/) for database issues
 
+## Working with Data in MySQL Workbench
+
+Once you have set up the databases and the web application, you'll need to work with data in MySQL Workbench to fully utilize the BookHIVE system.
+
+### Importing Sample Data
+
+To populate your databases with sample data:
+
+1. **Create Sample Data Files**:
+   
+   Create CSV files for each table you want to populate. For example:
+   
+   **UWindsor_Library.books.csv**:
+   ```
+   id,title,author,isbn,publisher,genre,publication_year
+   1,"Introduction to Database Systems","C.J. Date","9780321197849","Pearson","Computer Science",2003
+   2,"The Art of Computer Programming","Donald Knuth","9780201896831","Addison-Wesley","Computer Science",1997
+   ```
+
+2. **Import Using MySQL Workbench**:
+   
+   a. Open MySQL Workbench and connect to your server
+   
+   b. Right-click on the table you want to import data into
+   
+   c. Select "Table Data Import Wizard"
+   
+   d. Follow the wizard to import your CSV file
+
+3. **Verify the Import**:
+   
+   Run a SELECT query to verify the data was imported correctly:
+   
+   ```sql
+   SELECT * FROM UWindsor_Library.books;
+   ```
+
+### Running Queries Against the Data Warehouse
+
+To analyze data in the BookHIVE data warehouse:
+
+1. **Connect to the Data Warehouse**:
+   
+   a. In MySQL Workbench, ensure you're connected to your MySQL server
+   
+   b. Select the BookHIVE_DW database from the schema list
+
+2. **Run Predefined Queries**:
+   
+   Execute any of the predefined queries from the README.md file. For example:
+   
+   ```sql
+   -- Most Popular Authors
+   SELECT a.author_name, COUNT(*) as loan_count
+   FROM BookHIVE_DW.Fact_Transactions fl
+   JOIN BookHIVE_DW.Dim_Books b ON fl.book_key = b.book_key
+   JOIN BookHIVE_DW.Dim_Authors a ON b.author_key = a.author_key
+   GROUP BY a.author_name
+   ORDER BY loan_count DESC
+   LIMIT 10;
+   ```
+
+3. **Create Custom Reports**:
+   
+   Design your own queries to analyze specific aspects of the library data:
+   
+   ```sql
+   -- Example: Books borrowed by member type
+   SELECT 
+     m.member_type,
+     COUNT(*) as loan_count,
+     COUNT(DISTINCT b.book_key) as unique_books
+   FROM BookHIVE_DW.Fact_Transactions fl
+   JOIN BookHIVE_DW.Dim_Books b ON fl.book_key = b.book_key
+   JOIN BookHIVE_DW.Dim_Members m ON fl.member_key = m.member_key
+   GROUP BY m.member_type
+   ORDER BY loan_count DESC;
+   ```
+
+### Exporting Data for Analysis
+
+To export data for external analysis:
+
+1. **Export Query Results**:
+   
+   a. Run your query in MySQL Workbench
+   
+   b. In the Results Grid, click the "Export" button
+   
+   c. Choose your preferred format (CSV, JSON, HTML, etc.)
+   
+   d. Save the file to your desired location
+
+2. **Export Entire Tables**:
+   
+   a. Right-click on the table in the Navigator panel
+   
+   b. Select "Table Data Export Wizard"
+   
+   c. Follow the wizard to export the table data
+
+### Visualizing Data in MySQL Workbench
+
+MySQL Workbench provides basic visualization capabilities:
+
+1. **Create EER Diagrams**:
+   
+   a. Select "Model" > "Create EER Model From Database"
+   
+   b. Follow the wizard to select your database
+   
+   c. View and customize the Entity-Relationship diagram
+
+2. **Use the Results Grid**:
+   
+   a. Run queries and view results in the grid
+   
+   b. Sort columns by clicking on headers
+   
+   c. Filter results using the filter row
+
+For more advanced visualizations, consider exporting the data to tools like Excel, Tableau, or Power BI.
+
 ## Next Steps
 
 After successfully running the application locally, you might want to:
 
-1. Load sample data into your databases
+1. Load sample data into your databases using the import methods described above
 2. Explore the predefined queries in the Data Warehouse section
 3. Customize the ETL process for your specific needs
-4. Extend the application with additional features
+4. Create custom reports and visualizations
+5. Extend the application with additional features
