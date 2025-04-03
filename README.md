@@ -2,6 +2,8 @@
 
 BookHIVE is a comprehensive library management system with an integrated data warehouse solution that combines data from multiple library sources (UWindsor Library and Windsor Public Library) for advanced analytics and reporting.
 
+> **Looking to run the application locally?** Check out the [Local Setup Guide](LOCAL_SETUP.md) for instructions on running the web application on your local machine.
+
 ## System Overview
 
 BookHIVE integrates data from two separate source databases into a unified data warehouse for comprehensive library management and analytics. The entire system is implemented using MySQL Workbench.
