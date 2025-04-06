@@ -2,6 +2,7 @@ import React from "react";
 import Head from "next/head";
 import Header from "@/components/Header";
 import { LibraryDashboard } from "@/components/LibraryDashboard";
+import { DatabaseAccess } from "@/components/DatabaseAccess";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
@@ -80,6 +81,7 @@ export default function Home() {
         </section>
         
         <main id="dashboard" className="flex-1 p-4 md:p-6 lg:p-8 pt-6">
+          <DatabaseAccess />
           <LibraryDashboard />
         </main>
         

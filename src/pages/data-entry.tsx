@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import Header from "@/components/Header";
+import { useRouter } from "next/router";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -11,9 +12,22 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export default function DataEntry() {
+  const router = useRouter();
   const [database, setDatabase] = useState("uwindsor");
   const [entryMethod, setEntryMethod] = useState("form");
   const [sqlQuery, setSqlQuery] = useState("");
+  
+  // Set the database based on the source parameter in the URL
+  useEffect(() => {
+    if (router.isReady) {
+      const { source } = router.query;
+      if (source === "uwindsor") {
+        setDatabase("uwindsor");
+      } else if (source === "public") {
+        setDatabase("windsor");
+      }
+    }
+  }, [router.isReady, router.query]);
   const [formData, setFormData] = useState({
     title: "",
     author: "",
