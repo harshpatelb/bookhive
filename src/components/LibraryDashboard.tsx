@@ -58,9 +58,21 @@ export function LibraryDashboard() {
     return [];
   };
 
-  // Handle button clicks
+  // Handle search functionality
   const handleSearch = () => {
-    alert(`Searching for: ${searchTerm}`);
+    // In a real application, this would make an API call to search the database
+    // For now, we're just filtering the mock data
+    if (!searchTerm) return;
+    
+    // Filter books based on search term
+    const filteredBooks = mockBooks.filter(book => 
+      book.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      book.genre.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    
+    // Set the active tab to books to show the search results
+    setActiveTab("books");
   };
 
   const handleExport = (type: string) => {

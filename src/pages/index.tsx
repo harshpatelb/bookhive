@@ -2,7 +2,6 @@ import React from "react";
 import Head from "next/head";
 import Header from "@/components/Header";
 import { LibraryDashboard } from "@/components/LibraryDashboard";
-import { DatabaseAccess } from "@/components/DatabaseAccess";
 import { DatabaseTables } from "@/components/DatabaseTables";
 import { Button } from "@/components/ui/button";
 
@@ -13,7 +12,7 @@ export default function Home() {
         <title>BookHIVE - Library Management System</title>
         <meta name="description" content="A comprehensive system for library management" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" />
       </Head>
       <div className="bg-black min-h-screen flex flex-col">
         <Header />
@@ -89,7 +88,6 @@ export default function Home() {
         </section>
         
         <main id="dashboard" className="flex-1 p-4 md:p-6 lg:p-8 pt-6">
-          <DatabaseAccess />
           <DatabaseTables />
           <LibraryDashboard />
         </main>
