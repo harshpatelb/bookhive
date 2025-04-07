@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { CustomQueryBuilder } from '@/components/CustomQueryBuilder';
 
 // Mock database schemas
 const databaseSchemas = {
@@ -322,6 +323,7 @@ const DataWarehouse = () => {
                   <TabsList className="w-full bg-zinc-800">
                     <TabsTrigger value="custom" className="data-[state=active]:bg-amber-900/50">Custom Query</TabsTrigger>
                     <TabsTrigger value="predefined" className="data-[state=active]:bg-amber-900/50">Predefined Queries</TabsTrigger>
+                    <TabsTrigger value="builder" className="data-[state=active]:bg-amber-900/50">Query Builder</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="custom" className="mt-4 space-y-4">
@@ -338,6 +340,16 @@ const DataWarehouse = () => {
                     >
                       {isLoading ? 'Executing...' : 'Execute Query'}
                     </Button>
+                  </TabsContent>
+                  
+                  <TabsContent value="builder" className="mt-4">
+                    <CustomQueryBuilder 
+                      onQueryGenerated={(query) => {
+                        setCustomQuery(query);
+                        setQueryToDisplay(query);
+                        setActiveTab('custom');
+                      }} 
+                    />
                   </TabsContent>
                   
                   <TabsContent value="predefined" className="mt-4 space-y-4">

@@ -51,6 +51,13 @@ export default function Home() {
                   >
                     Query Data Warehouse
                   </Button>
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-black font-semibold"
+                    onClick={() => window.location.href = '/data-entry'}
+                  >
+                    Add Data
+                  </Button>
                 </div>
               </div>
               

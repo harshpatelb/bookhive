@@ -4,6 +4,79 @@ BookHIVE is a comprehensive library management system with an integrated data wa
 
 > **Looking to run the application locally?** Check out the [Local Setup Guide](LOCAL_SETUP.md) for instructions on running the web application on your local machine.
 
+## Technical Stack
+
+### Frontend
+- **Framework**: Next.js - A React framework for production-grade applications
+- **UI Components**: shadcn/ui - A collection of reusable UI components built with Radix UI and Tailwind CSS
+- **Styling**: Tailwind CSS - A utility-first CSS framework for rapid UI development
+- **State Management**: React Hooks for local state management
+- **Data Fetching**: Next.js API routes for server-side data fetching
+
+### Backend
+- **API Routes**: Next.js API routes for handling server-side logic
+- **Database ORM**: Prisma - A next-generation ORM for Node.js and TypeScript
+- **Authentication**: (To be implemented based on requirements)
+
+### Database
+- **Database System**: MySQL - A robust relational database management system
+- **Data Warehouse**: MySQL-based data warehouse with star and snowflake schemas
+- **ETL Process**: Custom ETL procedures for data extraction, transformation, and loading
+
+## Database Connection
+
+BookHIVE connects to MySQL databases using Prisma ORM. The connection is configured in the Prisma schema file and uses environment variables for secure credential management.
+
+### Connection Configuration
+
+The application connects to three different MySQL databases:
+1. **UWindsor Library Database** - Contains academic library data
+2. **Windsor Public Library Database** - Contains public library data
+3. **Data Warehouse** - Consolidated data from both sources
+
+### Connection Setup
+
+To set up the database connection:
+
+1. Create a `.env` file in the root directory with the following variables:
+   ```
+   DATABASE_URL_UWINDSOR="mysql://username:password@localhost:3306/UWindsor_Library"
+   DATABASE_URL_PUBLIC="mysql://username:password@localhost:3306/Windsor_PLibrary"
+   DATABASE_URL_WAREHOUSE="mysql://username:password@localhost:3306/BookHIVE_DW"
+   ```
+
+2. Replace `username` and `password` with your MySQL credentials
+
+3. The application uses Prisma to connect to these databases:
+   ```typescript
+   // Example Prisma client initialization
+   import { PrismaClient } from '@prisma/client'
+   
+   const prismaUWindsor = new PrismaClient({
+     datasources: {
+       db: {
+         url: process.env.DATABASE_URL_UWINDSOR,
+       },
+     },
+   })
+   
+   const prismaPublic = new PrismaClient({
+     datasources: {
+       db: {
+         url: process.env.DATABASE_URL_PUBLIC,
+       },
+     },
+   })
+   
+   const prismaWarehouse = new PrismaClient({
+     datasources: {
+       db: {
+         url: process.env.DATABASE_URL_WAREHOUSE,
+       },
+     },
+   })
+   ```
+
 ## System Overview
 
 BookHIVE integrates data from two separate source databases into a unified data warehouse for comprehensive library management and analytics. The entire system is implemented using MySQL Workbench.

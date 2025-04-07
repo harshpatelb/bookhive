@@ -9,11 +9,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const mockData = {
   uwindsor: {
     books: [
-      { id: 1, title: "Introduction to Computer Science", author: "John Smith", year: 2020, available: true },
-      { id: 2, title: "Advanced Database Systems", author: "Jane Doe", year: 2019, available: false },
-      { id: 3, title: "Machine Learning Fundamentals", author: "Robert Johnson", year: 2021, available: true },
-      { id: 4, title: "Algorithms and Data Structures", author: "Emily Chen", year: 2018, available: true },
-      { id: 5, title: "Software Engineering Principles", author: "Michael Brown", year: 2022, available: true },
+      { id: 1, title: "Introduction to Computer Science", author: "John Smith", year: 2020, available: true, copies: 5 },
+      { id: 2, title: "Advanced Database Systems", author: "Jane Doe", year: 2019, available: false, copies: 3 },
+      { id: 3, title: "Machine Learning Fundamentals", author: "Robert Johnson", year: 2021, available: true, copies: 7 },
+      { id: 4, title: "Algorithms and Data Structures", author: "Emily Chen", year: 2018, available: true, copies: 4 },
+      { id: 5, title: "Software Engineering Principles", author: "Michael Brown", year: 2022, available: true, copies: 6 },
     ],
     members: [
       { id: 101, name: "Alex Johnson", type: "Student", joinDate: "2021-09-01" },
@@ -23,11 +23,11 @@ const mockData = {
   },
   public: {
     books: [
-      { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", year: 1925, available: true },
-      { id: 2, title: "To Kill a Mockingbird", author: "Harper Lee", year: 1960, available: true },
-      { id: 3, title: "1984", author: "George Orwell", year: 1949, available: false },
-      { id: 4, title: "Pride and Prejudice", author: "Jane Austen", year: 1813, available: true },
-      { id: 5, title: "The Hobbit", author: "J.R.R. Tolkien", year: 1937, available: false },
+      { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", year: 1925, available: true, copies: 8 },
+      { id: 2, title: "To Kill a Mockingbird", author: "Harper Lee", year: 1960, available: true, copies: 12 },
+      { id: 3, title: "1984", author: "George Orwell", year: 1949, available: false, copies: 6 },
+      { id: 4, title: "Pride and Prejudice", author: "Jane Austen", year: 1813, available: true, copies: 4 },
+      { id: 5, title: "The Hobbit", author: "J.R.R. Tolkien", year: 1937, available: false, copies: 9 },
     ],
     members: [
       { id: 201, name: "James Wilson", type: "Adult", joinDate: "2020-03-12" },
@@ -37,12 +37,12 @@ const mockData = {
   },
   warehouse: {
     books: [
-      { id: 1, title: "Introduction to Computer Science", author: "John Smith", year: 2020, available: true, source: "UWindsor" },
-      { id: 2, title: "Advanced Database Systems", author: "Jane Doe", year: 2019, available: false, source: "UWindsor" },
-      { id: 3, title: "The Great Gatsby", author: "F. Scott Fitzgerald", year: 1925, available: true, source: "Public" },
-      { id: 4, title: "To Kill a Mockingbird", author: "Harper Lee", year: 1960, available: true, source: "Public" },
-      { id: 5, title: "Machine Learning Fundamentals", author: "Robert Johnson", year: 2021, available: true, source: "UWindsor" },
-      { id: 6, title: "1984", author: "George Orwell", year: 1949, available: false, source: "Public" },
+      { id: 1, title: "Introduction to Computer Science", author: "John Smith", year: 2020, available: true, source: "UWindsor", copies: 5 },
+      { id: 2, title: "Advanced Database Systems", author: "Jane Doe", year: 2019, available: false, source: "UWindsor", copies: 3 },
+      { id: 3, title: "The Great Gatsby", author: "F. Scott Fitzgerald", year: 1925, available: true, source: "Public", copies: 8 },
+      { id: 4, title: "To Kill a Mockingbird", author: "Harper Lee", year: 1960, available: true, source: "Public", copies: 12 },
+      { id: 5, title: "Machine Learning Fundamentals", author: "Robert Johnson", year: 2021, available: true, source: "UWindsor", copies: 7 },
+      { id: 6, title: "1984", author: "George Orwell", year: 1949, available: false, source: "Public", copies: 6 },
     ],
     members: [
       { id: 101, name: "Alex Johnson", type: "Student", joinDate: "2021-09-01", source: "UWindsor" },
@@ -124,6 +124,7 @@ export function DatabaseTables() {
                         <TableHead className="text-amber-400">Author</TableHead>
                         <TableHead className="text-amber-400">Year</TableHead>
                         <TableHead className="text-amber-400">Status</TableHead>
+                        <TableHead className="text-amber-400">Copies</TableHead>
                       </TableRow>
                     ) : (
                       <TableRow>
@@ -147,6 +148,7 @@ export function DatabaseTables() {
                               {book.available ? "Available" : "Checked Out"}
                             </Badge>
                           </TableCell>
+                          <TableCell>{book.copies}</TableCell>
                         </TableRow>
                       ))
                     ) : (
@@ -200,6 +202,7 @@ export function DatabaseTables() {
                         <TableHead className="text-amber-400">Author</TableHead>
                         <TableHead className="text-amber-400">Year</TableHead>
                         <TableHead className="text-amber-400">Status</TableHead>
+                        <TableHead className="text-amber-400">Copies</TableHead>
                       </TableRow>
                     ) : (
                       <TableRow>
@@ -223,6 +226,7 @@ export function DatabaseTables() {
                               {book.available ? "Available" : "Checked Out"}
                             </Badge>
                           </TableCell>
+                          <TableCell>{book.copies}</TableCell>
                         </TableRow>
                       ))
                     ) : (
@@ -276,6 +280,7 @@ export function DatabaseTables() {
                         <TableHead className="text-amber-400">Author</TableHead>
                         <TableHead className="text-amber-400">Year</TableHead>
                         <TableHead className="text-amber-400">Status</TableHead>
+                        <TableHead className="text-amber-400">Copies</TableHead>
                         <TableHead className="text-amber-400">Source</TableHead>
                       </TableRow>
                     ) : (
@@ -301,6 +306,7 @@ export function DatabaseTables() {
                               {book.available ? "Available" : "Checked Out"}
                             </Badge>
                           </TableCell>
+                          <TableCell>{book.copies}</TableCell>
                           <TableCell>{getSourceBadge(book.source)}</TableCell>
                         </TableRow>
                       ))
