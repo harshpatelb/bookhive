@@ -13,6 +13,26 @@ BookHIVE is a comprehensive library management system with an integrated data wa
 - **State Management**: React Hooks for local state management
 - **Data Fetching**: Next.js API routes for server-side data fetching
 
+## Application Pages
+
+### Home Page
+The main landing page that provides an overview of the BookHIVE system and its features.
+
+### Architecture Page (`/architecture`)
+Detailed explanation of the system architecture, including source databases, data warehouse structure, and database schemas. This page shows how data flows between different components of the system.
+
+### ETL Process Page (`/etl-process`)
+Explains the Extract, Transform, Load process used to integrate data from multiple library sources into the unified data warehouse. Includes detailed SQL examples and process diagrams.
+
+### Data Entry Page (`/data-entry`)
+Allows users to add data to source databases (UWindsor_Library and UToronto_Library) through forms or direct SQL queries. Supports adding:
+- Books
+- Members
+- Transactions (borrowing, returning, and renewing books)
+
+### Data Warehouse Page (`/data-warehouse`)
+Provides tools for querying and analyzing the integrated data warehouse, with predefined queries and custom query capabilities.
+
 ### Backend
 - **API Routes**: Next.js API routes for handling server-side logic
 - **Database ORM**: Prisma - A next-generation ORM for Node.js and TypeScript
@@ -31,7 +51,7 @@ BookHIVE connects to MySQL databases using Prisma ORM. The connection is configu
 
 The application connects to three different MySQL databases:
 1. **UWindsor Library Database** - Contains academic library data
-2. **Windsor Public Library Database** - Contains public library data
+2. **UToronto Library Database** - Contains University of Toronto library data
 3. **Data Warehouse** - Consolidated data from both sources
 
 ### Connection Setup
@@ -85,7 +105,7 @@ BookHIVE integrates data from two separate source databases into a unified data 
 
 1. **Source Databases (MySQL)**
    - UWindsor_Library: University library system with academic resources
-   - Windsor_PLibrary: Public library system serving the broader community
+   - UToronto_Library: University of Toronto library system with academic and research resources
 
 2. **ETL Processing Layer**
    - Data extraction from source databases
@@ -155,10 +175,10 @@ BookHIVE integrates data from two separate source databases into a unified data 
    );
    ```
 
-3. Create the Windsor_PLibrary database:
+3. Create the UToronto_Library database:
    ```sql
-   CREATE DATABASE Windsor_PLibrary;
-   USE Windsor_PLibrary;
+   CREATE DATABASE UToronto_Library;
+   USE UToronto_Library;
 
    CREATE TABLE inventory (
      item_id INT PRIMARY KEY AUTO_INCREMENT,

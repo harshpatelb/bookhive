@@ -38,6 +38,11 @@ export default function DataEntry() {
     memberName: "",
     memberEmail: "",
     memberType: "student",
+    bookId: "",
+    memberId: "",
+    loanDate: "",
+    dueDate: "",
+    transactionType: "borrow",
   });
   const [tableType, setTableType] = useState("books");
   const [successMessage, setSuccessMessage] = useState("");
@@ -57,10 +62,10 @@ export default function DataEntry() {
     }
     
     // Mock SQL execution
-    console.log(`Executing SQL on ${database === "uwindsor" ? "UWindsor_Library" : "Windsor_PLibrary"} database:`, sqlQuery);
+    console.log(`Executing SQL on ${database === "uwindsor" ? "UWindsor_Library" : "UToronto_Library"} database:`, sqlQuery);
     
     // Show success message
-    setSuccessMessage(`Query executed successfully on ${database === "uwindsor" ? "UWindsor_Library" : "Windsor_PLibrary"} database`);
+    setSuccessMessage(`Query executed successfully on ${database === "uwindsor" ? "UWindsor_Library" : "UToronto_Library"} database`);
     setTimeout(() => setSuccessMessage(""), 3000);
     
     // Clear the query
@@ -79,27 +84,48 @@ export default function DataEntry() {
         alert("Please fill in all required member fields");
         return;
       }
+    } else if (tableType === "transactions") {
+      if (!formData.bookId || !formData.memberId || !formData.loanDate || !formData.dueDate) {
+        alert("Please fill in all required transaction fields");
+        return;
+      }
     }
     
     // Mock form submission
-    console.log(`Adding ${tableType} to ${database === "uwindsor" ? "UWindsor_Library" : "Windsor_PLibrary"} database:`, formData);
+    console.log(`Adding ${tableType} to ${database === "uwindsor" ? "UWindsor_Library" : "UToronto_Library"} database:`, formData);
     
     // Show success message
-    setSuccessMessage(`Data added successfully to ${database === "uwindsor" ? "UWindsor_Library" : "Windsor_PLibrary"} database`);
+    setSuccessMessage(`Data added successfully to ${database === "uwindsor" ? "UWindsor_Library" : "UToronto_Library"} database`);
     setTimeout(() => setSuccessMessage(""), 3000);
     
-    // Clear the form
-    setFormData({
-      title: "",
-      author: "",
-      isbn: "",
-      publisher: "",
-      genre: "",
-      publicationYear: "",
-      memberName: "",
-      memberEmail: "",
-      memberType: "student",
-    });
+    // Clear the form based on table type
+    if (tableType === "books") {
+      setFormData({
+        ...formData,
+        title: "",
+        author: "",
+        isbn: "",
+        publisher: "",
+        genre: "",
+        publicationYear: "",
+      });
+    } else if (tableType === "members") {
+      setFormData({
+        ...formData,
+        memberName: "",
+        memberEmail: "",
+        memberType: "student",
+      });
+    } else if (tableType === "transactions") {
+      setFormData({
+        ...formData,
+        bookId: "",
+        memberId: "",
+        loanDate: "",
+        dueDate: "",
+        transactionType: "borrow",
+      });
+    }
   };
 
   return (
@@ -120,7 +146,7 @@ export default function DataEntry() {
                   Source Database Data Entry
                 </CardTitle>
                 <CardDescription className="text-zinc-400">
-                  Add data to UWindsor_Library and Windsor_PLibrary source databases
+                  Add data to UWindsor_Library and UToronto_Library source databases
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
@@ -142,8 +168,8 @@ export default function DataEntry() {
                       <Label htmlFor="uwindsor" className="text-zinc-300">UWindsor_Library</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="windsor" id="windsor" className="border-amber-500 text-amber-500" />
-                      <Label htmlFor="windsor" className="text-zinc-300">Windsor_PLibrary</Label>
+                      <RadioGroupItem value="utoronto" id="utoronto" className="border-amber-500 text-amber-500" />
+                      <Label htmlFor="utoronto" className="text-zinc-300">UToronto_Library</Label>
                     </div>
                   </RadioGroup>
                 </div>
@@ -182,6 +208,10 @@ export default function DataEntry() {
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="members" id="members" className="border-amber-500 text-amber-500" />
                           <Label htmlFor="members" className="text-zinc-300">Members</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="transactions" id="transactions" className="border-amber-500 text-amber-500" />
+                          <Label htmlFor="transactions" className="text-zinc-300">Transactions</Label>
                         </div>
                       </RadioGroup>
                     </div>
@@ -263,7 +293,7 @@ export default function DataEntry() {
                           </div>
                         </div>
                       </div>
-                    ) : (
+                    ) : tableType === "members" ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">
                           <div>
@@ -303,6 +333,73 @@ export default function DataEntry() {
                                 <SelectItem value="public" className="text-zinc-300 focus:bg-amber-500/10 focus:text-amber-400">Public</SelectItem>
                               </SelectContent>
                             </Select>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="bookId" className="text-zinc-300">Book ID <span className="text-red-500">*</span></Label>
+                            <Input 
+                              id="bookId" 
+                              name="bookId" 
+                              value={formData.bookId}
+                              onChange={handleFormChange}
+                              placeholder="Enter book ID" 
+                              className="bg-black border-amber-500/30 focus-visible:ring-amber-500/30"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="memberId" className="text-zinc-300">Member ID <span className="text-red-500">*</span></Label>
+                            <Input 
+                              id="memberId" 
+                              name="memberId" 
+                              value={formData.memberId}
+                              onChange={handleFormChange}
+                              placeholder="Enter member ID" 
+                              className="bg-black border-amber-500/30 focus-visible:ring-amber-500/30"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="transactionType" className="text-zinc-300">Transaction Type</Label>
+                            <Select name="transactionType" value={formData.transactionType} onValueChange={(value) => setFormData({...formData, transactionType: value})}>
+                              <SelectTrigger className="bg-black border-amber-500/30 focus:ring-amber-500/30">
+                                <SelectValue placeholder="Select transaction type" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-black border-amber-500/30">
+                                <SelectItem value="borrow" className="text-zinc-300 focus:bg-amber-500/10 focus:text-amber-400">Borrow</SelectItem>
+                                <SelectItem value="return" className="text-zinc-300 focus:bg-amber-500/10 focus:text-amber-400">Return</SelectItem>
+                                <SelectItem value="renew" className="text-zinc-300 focus:bg-amber-500/10 focus:text-amber-400">Renew</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="loanDate" className="text-zinc-300">Loan Date <span className="text-red-500">*</span></Label>
+                            <Input 
+                              id="loanDate" 
+                              name="loanDate" 
+                              type="date"
+                              value={formData.loanDate}
+                              onChange={handleFormChange}
+                              className="bg-black border-amber-500/30 focus-visible:ring-amber-500/30"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="dueDate" className="text-zinc-300">Due Date <span className="text-red-500">*</span></Label>
+                            <Input 
+                              id="dueDate" 
+                              name="dueDate" 
+                              type="date"
+                              value={formData.dueDate}
+                              onChange={handleFormChange}
+                              className="bg-black border-amber-500/30 focus-visible:ring-amber-500/30"
+                            />
+                          </div>
+                          <div className="pt-4">
+                            <p className="text-xs text-amber-400/80 mb-2">Note: For returns, please specify the original loan date and the current date will be used as the return date.</p>
                           </div>
                         </div>
                       </div>
@@ -367,7 +464,7 @@ loans (
                           </pre>
                         </div>
                         <div>
-                          <h5 className="text-amber-400/80 text-sm mb-1">Windsor_PLibrary</h5>
+                          <h5 className="text-amber-400/80 text-sm mb-1">UToronto_Library</h5>
                           <pre className="text-xs text-zinc-400 overflow-x-auto">
 {`inventory (
   item_id INT PRIMARY KEY,

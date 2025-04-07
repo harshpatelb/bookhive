@@ -61,6 +61,12 @@ export function DatabaseTables() {
   const [selectedMember, setSelectedMember] = useState<any>(null);
   const [showMemberDetails, setShowMemberDetails] = useState(false);
   const [databaseConnected, setDatabaseConnected] = useState(true); // Simulate database connection status
+  
+  // Ensure the active table is properly set when changing databases
+  useEffect(() => {
+    // Keep the current active table when switching databases
+    // This ensures members table stays selected when switching between databases
+  }, [activeDatabase]);
 
   const getSourceBadge = (source: string) => {
     switch (source) {

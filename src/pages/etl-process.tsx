@@ -43,7 +43,7 @@ export default function ETLProcessPage() {
                     </li>
                     <li>
                       <strong className="text-amber-400">Create Source Databases:</strong>
-                      <p className="mt-1 text-zinc-400">Execute the UWindsor_Library and Windsor_PLibrary schema creation scripts.</p>
+                      <p className="mt-1 text-zinc-400">Execute the UWindsor_Library and UToronto_Library schema creation scripts.</p>
                     </li>
                     <li>
                       <strong className="text-amber-400">Create Data Warehouse Database:</strong>
@@ -84,7 +84,7 @@ export default function ETLProcessPage() {
               <CardHeader className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-t-lg border-b border-amber-500/20">
                 <CardTitle className="text-amber-400">Data Integration Details</CardTitle>
                 <CardDescription className="text-zinc-400">
-                  How data from UWindsor Library and Windsor Public Library is integrated
+                  How data from UWindsor Library and University of Toronto Library is integrated
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
@@ -138,10 +138,10 @@ FROM loans;`}
                       
                       <div className="bg-gradient-to-br from-zinc-900 to-black p-6 rounded-xl border border-amber-500/20">
                         <h3 className="text-xl font-semibold mb-3 bg-gradient-to-r from-amber-400 to-orange-500 text-transparent bg-clip-text">
-                          Windsor Public Library Extraction
+                          University of Toronto Library Extraction
                         </h3>
                         <p className="text-zinc-400 mb-4">
-                          Data is extracted from the public library MySQL database.
+                          Data is extracted from the UToronto library MySQL database.
                         </p>
                         <pre className="bg-zinc-800 p-4 rounded-md overflow-x-auto text-sm text-zinc-300">
 {`-- Extract inventory data
@@ -157,9 +157,9 @@ FROM inventory;
 -- Extract patrons data
 SELECT 
   patron_id, 
-  name, 
-  address, 
-  phone, 
+  full_name, 
+  contact_email, 
+  patron_type, 
   registration_date
 FROM patrons;
 
@@ -169,7 +169,7 @@ SELECT
   item_id, 
   patron_id, 
   checkout_date, 
-  due_date
+  expected_return
 FROM checkouts;`}
                         </pre>
                       </div>
@@ -188,8 +188,8 @@ FROM checkouts;`}
 {`-- Standardize book/item data
 SELECT 
   CASE 
-    WHEN source = 'UWindsor' THEN CONCAT('UW-', book_id)
-    WHEN source = 'PublicLib' THEN CONCAT('PL-', item_id)
+    WHEN source = 'UWindsor_Library' THEN CONCAT('UW-', book_id)
+    WHEN source = 'UToronto_Library' THEN CONCAT('UT-', item_id)
   END as source_id,
   UPPER(title) as title_standardized,
   author,

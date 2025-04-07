@@ -41,7 +41,7 @@ export default function Architecture() {
                         Our architecture consists of three main components:
                       </p>
                       <ol className="list-decimal pl-5 space-y-2 text-zinc-300">
-                        <li>Source databases (MySQL) - UWindsor_Library and Windsor_PLibrary</li>
+                        <li>Source databases (MySQL) - UWindsor_Library and UToronto_Library</li>
                         <li>ETL processing layer - Data extraction, transformation, and loading</li>
                         <li>Data warehouse (MySQL) - Integrated repository with optimized schema for analytics</li>
                       </ol>
@@ -132,30 +132,30 @@ CREATE TABLE loans (
                   
                   <div className="bg-gradient-to-br from-zinc-900 to-black p-6 rounded-xl border border-amber-500/20">
                     <h3 className="text-xl font-semibold mb-3 bg-gradient-to-r from-amber-400 to-orange-500 text-transparent bg-clip-text">
-                      Source Database 2: Windsor_PLibrary (MySQL)
+                      Source Database 2: UToronto_Library (MySQL)
                     </h3>
                     <p className="text-zinc-400 mb-4">
-                      Public library system serving the broader Windsor community with diverse resources.
+                      University of Toronto library system with a comprehensive collection of academic and research resources.
                     </p>
                     <ul className="space-y-2 text-zinc-300">
                       <li className="flex items-start">
                         <span className="text-amber-500 mr-2">•</span>
-                        <span><strong className="text-amber-400">inventory:</strong> Fiction, non-fiction, multimedia resources</span>
+                        <span><strong className="text-amber-400">inventory:</strong> Academic journals, research papers, specialized collections</span>
                       </li>
                       <li className="flex items-start">
                         <span className="text-amber-500 mr-2">•</span>
-                        <span><strong className="text-amber-400">patrons:</strong> Community members of all ages and backgrounds</span>
+                        <span><strong className="text-amber-400">patrons:</strong> Students, faculty, researchers, and visiting scholars</span>
                       </li>
                       <li className="flex items-start">
                         <span className="text-amber-500 mr-2">•</span>
-                        <span><strong className="text-amber-400">checkouts:</strong> Public lending with standard public library policies</span>
+                        <span><strong className="text-amber-400">checkouts:</strong> Academic lending with research-oriented policies</span>
                       </li>
                     </ul>
                     <div className="mt-4 p-3 bg-black/70 rounded border border-amber-500/10">
                       <pre className="text-xs text-zinc-400 overflow-x-auto">
-{`-- Windsor_PLibrary Schema (MySQL)
-CREATE DATABASE Windsor_PLibrary;
-USE Windsor_PLibrary;
+{`-- UToronto_Library Schema (MySQL)
+CREATE DATABASE UToronto_Library;
+USE UToronto_Library;
 
 CREATE TABLE inventory (
   item_id INT PRIMARY KEY AUTO_INCREMENT,
